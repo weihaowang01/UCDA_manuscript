@@ -1,15 +1,13 @@
-## 我先封装一下 目标是 四种IPOD可以拿来只需要调整部分参数即可
-# rej2 = PODA2(as.matrix(Z),Y,type="hard-modi",formulaa,seed=1234)
-# rej2
 
-PODA2 = function(Z,Y,type="hard-modi",formulaa,seed="1234"){
+
+UCDA = function(Z,Y,type="hard-modi",formulaa,seed="1234"){
   ###################################################################################
   ############################# zero-imputation #####################################
   ###################################################################################
   
   O=Y
   # Y=as.matrix(log(O+0.5))
-  Y =log(.imputation(O,Z,formulaa))###这里也要改呢
+  Y =log(.imputation(O,Z,formulaa))
   # X_true=as.matrix(Z)
   # X=cbind(as.matrix(rep(1,n)),X_true[,1])
   Z=as.matrix(Z)
@@ -38,21 +36,18 @@ PODA2 = function(Z,Y,type="hard-modi",formulaa,seed="1234"){
   ###################################################################################
   # Step 2.1: 使用Bai et al. 提出的 QMLE 得到Phi和confounders C的估计。先直接使用CATE里的fa.em看看效果
   ## 输入：
-  ## Y2（观测得到的数据）
-  ## r（用什么方法估计？ factor model中的方法，这里估计的r估计也要一起放到下一个步骤中去使用）
+  ## Y2
+  ## r
   
-  ## 首先要有个估计r的步骤
+
   
   ## 然后将Y2输入到fa.em中
   # r=4
-  # XX=data.frame(X1=X[,2],X2=X[,3]) #你后面可以改成需要制定哪列是需要的
+  # XX=data.frame(X1=X[,2],X2=X[,3]) 
   XX <- data.frame(X[, 2:ncol(X), drop = FALSE])
   colnames(XX) <- paste0("X", 1:(ncol(X)-1))
   formula.r <- reformulate(colnames(XX), response = NULL)
-  r=est.confounder.num(formula.r , XX, t(Y), method = "ed",bcv.plot = FALSE) # 估计r
-  # XX=data.frame(X1=X[,2],X2=X[,3],X3=X[,4]) #你后面可以改成需要制定哪列是需要的
-  # r=est.confounder.num(~ X1+X2+X3, XX, t(Y), method = "ed",bcv.plot = FALSE) # 估计r
-  # r=2
+  r=est.confounder.num(formula.r , XX, t(Y), method = "ed",bcv.plot = FALSE) 
   print(c("r=",r))
  
   
